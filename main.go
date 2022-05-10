@@ -70,7 +70,12 @@ func main() {
 
 					// now create another invoice, this time with the desired description_hash instead
 					bolt11 := inv.Get("bolt11").String()
-					invoice, err := zpay32.Decode(bolt11, chainFromCurrency(bolt11[2:]))
+					firstNumber := strings.IndexAny(bolt11, "1234567890")
+					chainPrefix := bolt11[2:firstNumber]
+					chain := &chaincfg.Params{
+						Bech32HRPSegwit: chainPrefix,
+					}
+					invoice, err := zpay32.Decode(bolt11, chain)
 					if err != nil {
 						err = fmt.Errorf("failed to decode '%s' received from lightningd with zpay32: %w",
 							bolt11, err)
@@ -114,16 +119,4 @@ func main() {
 		},
 	}
 	p.Run()
-}
-
-func chainFromCurrency(currency string) *chaincfg.Params {
-	if strings.HasPrefix(currency, "bcrt") {
-		return &chaincfg.RegressionNetParams
-	} else if strings.HasPrefix(currency, "tb") {
-		return &chaincfg.TestNet3Params
-	} else if strings.HasPrefix(currency, "sb") {
-		return &chaincfg.SimNetParams
-	} else {
-		return &chaincfg.MainNetParams
-	}
 }
