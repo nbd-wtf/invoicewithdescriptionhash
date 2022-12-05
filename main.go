@@ -18,7 +18,7 @@ import (
 func main() {
 	p := plugin.Plugin{
 		Name:    "invoicewithdescriptionhash",
-		Version: "v1.3",
+		Version: "v1.4",
 		Options: []plugin.Option{},
 		RPCMethods: []plugin.RPCMethod{
 			{
